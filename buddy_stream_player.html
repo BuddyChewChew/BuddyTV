@@ -112,7 +112,7 @@
         let channels = [];
 
         function fetchM3U() {
-            fetch('https://raw.githubusercontent.com/BuddyChewChew/BuddyTV/refs/heads/main/Buddy.m3u')
+            fetch('http://m3u4u.com/m3u/m/qgkjpn5315cv6q48ey79')
                 .then(response => response.text())
                 .then(data => parseM3U(data))
                 .catch(error => console.error('Error:', error));
