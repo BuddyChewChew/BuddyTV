@@ -112,7 +112,7 @@
         let channels = [];
 
         function fetchM3U() {
-            fetch('http://m3u4u.com/m3u/m/qgkjpn5315cv6q48ey79')
+            fetch('http://m3u4u.com/m3u/m/qgkjpn5315cv6q48ey79.m3u')
                 .then(response => response.text())
                 .then(data => parseM3U(data))
                 .catch(error => console.error('Error:', error));
