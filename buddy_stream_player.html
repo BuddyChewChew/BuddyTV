@@ -146,7 +146,7 @@
             const lines = data.split('\n');
             let currentChannel = {};
 
-            for (let line of lines) {
+            lines.forEach(line => {
                 if (line.startsWith('#EXTINF:')) {
                     const titleMatch = line.match(/,(.+)/);
                     currentChannel.title = titleMatch ? titleMatch[1].trim() : 'Untitled Channel';
@@ -155,7 +155,7 @@
                     channels.push(currentChannel);
                     currentChannel = {};
                 }
-            }
+            });
 
             console.log('Channels parsed:', channels);
             displayChannels();
@@ -206,8 +206,10 @@
                 });
                 hls.on(Hls.Events.ERROR, function(event, data) {
                     if (data.fatal) {
-                        loadingIndicator.style.display = 'none';
-                        errorMessage.style.display = 'block';
+                        setTimeout(() => {
+                            loadingIndicator.style.display = 'none';
+                            errorMessage.style.display = 'block';
+                        }, 5000); // Delay by 5 seconds
                     }
                 });
                 hls.on(Hls.Events.LEVEL_LOADED, function() {
@@ -223,7 +225,7 @@
             // For native HLS support (Safari)
             else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
                 videoPlayer.src = channel.url;
-                videoPlayer.addEventListener('loadedmetadata', function() {
+                videoPlayer.addEventListener('loadedmetadata', () => {
                     loadingIndicator.style.display = 'none';
                     errorMessage.style.display = 'none';
                     if (!messageShown) {
@@ -233,28 +235,16 @@
                     }
                     videoPlayer.play();
                 });
-                videoPlayer.addEventListener('play', function() {
-                    loadingIndicator.style.display = 'none';
-                    errorMessage.style.display = 'none';
-                    if (!messageShown) {
-                        applaudingMessage.style.display = 'block';
-                        setTimeout(() => applaudingMessage.style.display = 'none', 3000); // Hide after 3 seconds
-                        messageShown = true;
-                    }
+                videoPlayer.addEventListener('error', () => {
+                    setTimeout(() => {
+                        loadingIndicator.style.display = 'none';
+                        errorMessage.style.display = 'block';
+                    }, 5000); // Delay by 5 seconds
                 });
-                videoPlayer.addEventListener('error', function() {
-                    loadingIndicator.style.display = 'none';
-                    errorMessage.style.display = 'block';
-                });
-            }
-            else {
-                loadingIndicator.style.display = 'none';
-                errorMessage.textContent = 'This browser does not support HLS playback';
-                errorMessage.style.display = 'block';
             }
         }
 
-        fetchM3U();
+        document.addEventListener('DOMContentLoaded', fetchM3U);
     </script>
 </body>
 </html>
