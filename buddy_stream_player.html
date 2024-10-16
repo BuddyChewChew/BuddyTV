@@ -90,6 +90,26 @@
             color: #ffffff;
             font-size: 20px;
         }
+        /* Error message */
+        #errorMessage {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            color: #ff0000;
+            font-size: 20px;
+        }
+        /* Applauding message */
+        #applaudingMessage {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            color: #00ff00;
+            font-size: 20px;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -104,12 +124,15 @@
             <div class="video-container">
                 <video id="videoPlayer" controls autoplay></video>
                 <div id="loadingIndicator">Loading...</div>
+                <div id="errorMessage">Failed to load stream. Please try another channel.</div>
+                <div id="applaudingMessage">Stream loaded successfully! 🎉</div>
             </div>
             <h2 id="videoTitle"></h2>
         </div>
     </div>
     <script>
         let channels = [];
+        let messageShown = false;
 
         function fetchM3U() {
             fetch('https://raw.githubusercontent.com/BuddyChewChew/BuddyTV/refs/heads/main/Buddy.m3u')
@@ -154,9 +177,14 @@
             const videoPlayer = document.getElementById('videoPlayer');
             const videoTitle = document.getElementById('videoTitle');
             const loadingIndicator = document.getElementById('loadingIndicator');
+            const errorMessage = document.getElementById('errorMessage');
+            const applaudingMessage = document.getElementById('applaudingMessage');
 
             videoTitle.textContent = channel.title;
             loadingIndicator.style.display = 'block';
+            errorMessage.style.display = 'none';
+            applaudingMessage.style.display = 'none';
+            messageShown = false;
 
             if (Hls.isSupported()) {
                 const hls = new Hls();
@@ -164,11 +192,27 @@
                 hls.attachMedia(videoPlayer);
                 hls.on(Hls.Events.MANIFEST_PARSED, function() {
                     loadingIndicator.style.display = 'none';
+                    errorMessage.style.display = 'none';
+                    if (!messageShown) {
+                        applaudingMessage.style.display = 'block';
+                        setTimeout(() => applaudingMessage.style.display = 'none', 3000); // Hide after 3 seconds
+                        messageShown = true;
+                    }
                     videoPlayer.play();
                 });
                 hls.on(Hls.Events.ERROR, function(event, data) {
                     if (data.fatal) {
-                        loadingIndicator.textContent = 'Failed to load stream';
+                        loadingIndicator.style.display = 'none';
+                        errorMessage.style.display = 'block';
+                    }
+                });
+                hls.on(Hls.Events.LEVEL_LOADED, function() {
+                    loadingIndicator.style.display = 'none';
+                    errorMessage.style.display = 'none';
+                    if (!messageShown) {
+                        applaudingMessage.style.display = 'block';
+                        setTimeout(() => applaudingMessage.style.display = 'none', 3000); // Hide after 3 seconds
+                        messageShown = true;
                     }
                 });
             }
@@ -177,14 +221,32 @@
                 videoPlayer.src = channel.url;
                 videoPlayer.addEventListener('loadedmetadata', function() {
                     loadingIndicator.style.display = 'none';
+                    errorMessage.style.display = 'none';
+                    if (!messageShown) {
+                        applaudingMessage.style.display = 'block';
+                        setTimeout(() => applaudingMessage.style.display = 'none', 3000); // Hide after 3 seconds
+                        messageShown = true;
+                    }
                     videoPlayer.play();
                 });
+                videoPlayer.addEventListener('play', function() {
+                    loadingIndicator.style.display = 'none';
+                    errorMessage.style.display = 'none';
+                    if (!messageShown) {
+                        applaudingMessage.style.display = 'block';
+                        setTimeout(() => applaudingMessage.style.display = 'none', 3000); // Hide after 3 seconds
+                        messageShown = true;
+                    }
+                });
                 videoPlayer.addEventListener('error', function() {
-                    loadingIndicator.textContent = 'Failed to load stream';
+                    loadingIndicator.style.display = 'none';
+                    errorMessage.style.display = 'block';
                 });
             }
             else {
-                loadingIndicator.textContent = 'This browser does not support HLS playback';
+                loadingIndicator.style.display = 'none';
+                errorMessage.textContent = 'This browser does not support HLS playback';
+                errorMessage.style.display = 'block';
             }
         }
 
