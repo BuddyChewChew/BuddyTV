@@ -135,7 +135,7 @@
         let messageShown = false;
 
         function fetchM3U() {
-            fetch('https://github.com/dtankdempse/moveonjoy-m3u')
+            fetch('https://github.com/stein-dev/iptvs/blob/main/usatv.m3u8')
                 .then(response => response.text())
                 .then(data => parseM3U(data))
                 .catch(error => console.error('Error fetching M3U file:', error));
