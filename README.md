@@ -3,7 +3,7 @@
 Link to use player: [https://buddychewchew.github.io/BuddyTV/buddy_stream_player.html](https://buddychewchew.github.io/BuddyTV/buddy_stream_player.html)
 
 ## You can edit:
-`https://iptv-org.github.io/iptv/index.m3u` in `buddy_stream_player.html` and use whaterver .m3u playlist url you want. Just download the html file and edit.
+`(https://raw.githubusercontent.com/iptv-org/iptv/refs/heads/master/streams/us_adultswim.m3u` in `buddy_stream_player.html` and use whaterver .m3u playlist url you want. Just download the html file and edit.
 
 ## You can edit:
 `<title>BUDDYTV - TV AND NO BS</title>` and  `<h1>BUDDYTV - TV AND NO BS</h1>` to whatever you want.
